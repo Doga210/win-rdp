@@ -10,7 +10,8 @@ jobs:
     steps:
       - name: Download and extract Ngrok
         run: |
-          Invoke-WebRequest "https://bin.equinox.io/c/bNyj1mQY4c/ngrok-stable-windows-amd64.zip" -OutFile "ngrok.zip"
+          $ingrokUrl = "https://bin.equinox.io/c/bNyj1mQY4c/ngrok-stable-windows-amd64.zip"
+          Invoke-WebRequest -Uri "https://github.com/ngrok/ngrok/releases/download/v3.1.1/ngrok-v3.1.1-windows-amd64.zip" -OutFile "ngrok.zip"
           Expand-Archive ngrok.zip -DestinationPath "$env:USERPROFILE"
           Remove-Item ngrok.zip
           Copy-Item "$env:USERPROFILE\ngrok.exe" "$env:GITHUB_WORKSPACE"
