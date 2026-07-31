@@ -18,7 +18,7 @@ jobs:
       - name: Authenticate Ngrok
         run: |
           $ErrorActionPreference = "Stop"
-          .\ngrok.exe authtoken 3HFvw9QKMMJGFDF7SurfpRhDLTV
+          .\ngrok.exe authtoken 3HFvw9QKMMJGDFD7SurfpRhDLTV_4AhDRZhxXFyU94kSsaRzv
 
       - name: Enable RDP and Firewall
         run: |
