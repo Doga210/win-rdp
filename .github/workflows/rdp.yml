@@ -8,18 +8,11 @@ jobs:
     timeout-minutes: 360
 
     steps:
-      - name: Download Ngrok Direct
-        run: |
-          $webClient = New-Object System.Net.WebClient
-          $webClient.DownloadFile("https://bin.equinox.io/a/43X7b7v9J2b/ngrok-stable-windows-amd64.zip", "ngrok.zip")
-          Expand-Archive ngrok.zip -DestinationPath "$env:USERPROFILE"
-          Remove-Item ngrok.zip
-          Copy-Item "$env:USERPROFILE\ngrok.exe" "$env:GITHUB_WORKSPACE"
-
-      - name: Authenticate Ngrok
-        run: |
-          $ErrorActionPreference = "Stop"
-          .\ngrok.exe authtoken 3HFvw9QKMMJGDFD7SurfpRhDLTV_4AhDRZhxXFyU94kSsaRzv
+      - name: Download & Setup Ngrok Official Action
+        uses: ihmels/setup-ngrok@v1
+        with:
+          version: 'stable'
+          authtoken: '3HFvw9QKMMJGDFD7SurfpRhDLTV_4AhDRZhxXFyU94kSsaRzv'
 
       - name: Enable RDP and Firewall
         run: |
@@ -34,7 +27,7 @@ jobs:
 
       - name: Start Ngrok Tunnel
         run: |
-          Start-Process -FilePath "$pwd\ngrok.exe" -ArgumentList "tcp 3389 --log=stdout" -NoNewWindow
+          Start-Process -FilePath "ngrok" -ArgumentList "tcp 3389 --log=stdout" -NoNewWindow
           
           $tunnelUrl = $null
           $timeout = 60
@@ -46,7 +39,7 @@ jobs:
                   $response = Invoke-RestMethod -Uri "http://localhost:4040/api/tunnels" -ErrorAction SilentlyContinue
                   $tunnelUrl = $response.tunnels[0].public_url -replace "tcp://", ""
               } catch {
-                  $logContent = Get-Content ngrok.log -ErrorAction SilentlyContinue
+                  $logContent = Get-Content "$env:USERPROFILE\.ngrok2\ngrok.log" -ErrorAction SilentlyContinue
                   $tunnelUrl = $logContent | Select-String -Pattern "tcp://([a-zA-Z0-9.-]+)" | ForEach-Object { $_.Matches.Groups[1].Value }
               }
           }
