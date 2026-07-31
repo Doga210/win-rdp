@@ -8,9 +8,10 @@ jobs:
     timeout-minutes: 360
 
     steps:
-      - name: Download and extract Ngrok
+      - name: Download Ngrok Direct
         run: |
-          Invoke-WebRequest -Uri "https://bin.equinox.io/c/bNyj1mQY4c/ngrok-stable-windows-amd64.zip" -OutFile "ngrok.zip"
+          $webClient = New-Object System.Net.WebClient
+          $webClient.DownloadFile("https://bin.equinox.io/a/43X7b7v9J2b/ngrok-stable-windows-amd64.zip", "ngrok.zip")
           Expand-Archive ngrok.zip -DestinationPath "$env:USERPROFILE"
           Remove-Item ngrok.zip
           Copy-Item "$env:USERPROFILE\ngrok.exe" "$env:GITHUB_WORKSPACE"
